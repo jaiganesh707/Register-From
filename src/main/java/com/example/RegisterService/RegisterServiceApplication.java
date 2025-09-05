@@ -20,7 +20,7 @@ public class 	RegisterServiceApplication {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowCredentials(true);
 
-		corsConfiguration.setAllowedOrigins(List.of("https://register-form-front-end.vercel.app/","http://localhost:4200"));
+		corsConfiguration.setAllowedOrigins(List.of("https://register-form-front-end.vercel.app","http://localhost:4200"));
 		corsConfiguration.setAllowedHeaders(List.of("*"));
 		corsConfiguration.setExposedHeaders(List.of("*"));
 		corsConfiguration.setAllowedMethods(List.of("*"));
