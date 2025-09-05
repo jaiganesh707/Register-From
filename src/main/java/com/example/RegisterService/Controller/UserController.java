@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/user")
 public class UserController {
 @Autowired private UserServiceImpl userService;
 @Autowired private AuthTokenFilter authTokenFilter;
