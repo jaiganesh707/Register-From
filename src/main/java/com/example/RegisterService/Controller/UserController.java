@@ -24,12 +24,7 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<?> userList(@RequestHeader(value = "Authorization", required = false) String authHeader)throws Exception{
         try {
-//                if (authHeader == null || !authHeader.isBlank()) {
-//                throw new CustomException("Unauthorized access", HttpStatus.UNAUTHORIZED.value());
-//            }
-
             UserDetailsImpl userDetails = authTokenFilter.validateAndGetUser(authHeader);
-
             // You can now validate user info if needed:
             String username = userDetails.getUsername();
             System.out.println("Logged-in user: " + username);

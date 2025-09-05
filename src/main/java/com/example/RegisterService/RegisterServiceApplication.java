@@ -10,7 +10,7 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.List;
 
 @SpringBootApplication
-public class RegisterServiceApplication {
+public class 	RegisterServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RegisterServiceApplication.class, args);
@@ -19,7 +19,7 @@ public class RegisterServiceApplication {
 	public CorsFilter corsFilter() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowCredentials(true);
-		corsConfiguration.setAllowedOrigins(List.of("http://localhost:4200"));
+		corsConfiguration.setAllowedOrigins(List.of("https://register-form-front-end.vercel.app","http://localhost:4200"));
 		corsConfiguration.setAllowedHeaders(List.of("*"));
 		corsConfiguration.setExposedHeaders(List.of("*"));
 		corsConfiguration.setAllowedMethods(List.of("*"));

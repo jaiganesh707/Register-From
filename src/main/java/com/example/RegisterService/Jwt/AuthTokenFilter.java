@@ -15,12 +15,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -103,11 +106,27 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
 
             String username = jwtUtils.getUserNameFromJwtToken(token);
+            List<String> roles = jwtUtils.getRolesFromJwtToken(token); // you need this method
+            List<SimpleGrantedAuthority> authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .toList();
+
+            UserDetailsImpl userDetails = new UserDetailsImpl(
+                    null,  // id not needed for authentication here
+                    username,
+                    "",    // email not needed
+                    "",    // password not needed
+                    authorities
+            );
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             if (username == null) {
                 throw new CustomException("USERNAME-NOT-FOUND-IN-TOKEN",HttpStatus.UNAUTHORIZED.value());
             }
 
             return (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
         }
-
     }
