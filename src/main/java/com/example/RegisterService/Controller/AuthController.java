@@ -5,6 +5,7 @@ import com.example.RegisterService.Entity.RefreshToken;
 import com.example.RegisterService.Entity.User;
 import com.example.RegisterService.GlobalExceptionHandling.CustomException;
 import com.example.RegisterService.Jwt.JwtUtils;
+import com.example.RegisterService.Model.Enum.ERole;
 import com.example.RegisterService.Model.Request.LoginRequest;
 import com.example.RegisterService.Model.Request.TokenRefreshRequest;
 import com.example.RegisterService.Model.Response.JwtResponse;
@@ -31,8 +32,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.relation.Role;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -96,7 +99,8 @@ public class AuthController {
                             throw new RuntimeException("User not found for the refresh token");
                         }
                         String username = userOpt.get().getUsername();
-                        String newAccessToken = jwtUtils.generateTokenFromUsername(username);
+                        Set<ERole> role=userOpt.get().getRoles();
+                        String newAccessToken = jwtUtils.generateTokenFromUsername(username,role);
                         return ResponseEntity.ok(new TokenRefreshResponse(newAccessToken, refreshToken));
                     }).orElseThrow(() -> new RuntimeException("Refresh token not found. Please sign in again."));
     }

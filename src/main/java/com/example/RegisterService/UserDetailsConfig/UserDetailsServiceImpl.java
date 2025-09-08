@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     private final UserDao userDao;
-
     @Autowired
     public UserDetailsServiceImpl(UserDao userDao) {
         this.userDao = userDao;

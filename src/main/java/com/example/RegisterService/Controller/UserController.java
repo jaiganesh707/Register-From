@@ -21,6 +21,7 @@ public class UserController {
 @Autowired private UserServiceImpl userService;
 @Autowired private AuthTokenFilter authTokenFilter;
 
+
     @GetMapping("/")
     public ResponseEntity<?> userList(@RequestHeader(value = "Authorization", required = false) String authHeader)throws Exception{
         try {
