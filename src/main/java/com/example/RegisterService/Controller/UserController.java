@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 @RestController
-@RequestMapping("user")
+@RequestMapping("/user")
 public class UserController {
 @Autowired private UserServiceImpl userService;
 @Autowired private AuthTokenFilter authTokenFilter;
 
 
-    @GetMapping("/")
+    @GetMapping("/list")
     public ResponseEntity<?> userList(@RequestHeader(value = "Authorization", required = false) String authHeader)throws Exception{
         try {
             UserDetailsImpl userDetails = authTokenFilter.validateAndGetUser(authHeader);
