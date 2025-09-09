@@ -16,6 +16,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtils {
@@ -36,7 +37,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
                 .claim("roles", userPrincipal.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
+                        .map(GrantedAuthority::getAuthority) // ROLE_USER, ROLE_ADMIN etc.
                         .toList())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
@@ -47,7 +48,9 @@ public class JwtUtils {
     public String generateTokenFromUsername(String username, Set<ERole> roles) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("roles", roles)
+                .claim("roles", roles.stream()
+                        .map(Enum::name)
+                        .toList())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)
@@ -71,11 +74,14 @@ public class JwtUtils {
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    public List<String> getRolesFromJwtToken(String token) {
+    public Set<ERole> getRolesFromJwtToken(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody();
 
-        return claims.get("roles", List.class);
+        List<String> roles = claims.get("roles", List.class);
+        return roles.stream()
+                .map(ERole::valueOf)  // Convert String -> Enum
+                .collect(Collectors.toSet());
     }
 
     public boolean validateJwtToken(String authToken) {

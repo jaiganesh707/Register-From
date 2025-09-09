@@ -1,6 +1,7 @@
 package com.example.RegisterService.Jwt;
 
 import com.example.RegisterService.GlobalExceptionHandling.CustomException;
+import com.example.RegisterService.Model.Enum.ERole;
 import com.example.RegisterService.Model.Response.RegisterResponse;
 import com.example.RegisterService.Repository.UserDao;
 import com.example.RegisterService.UserDetailsConfig.UserDetailsImpl;
@@ -24,6 +25,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -106,9 +108,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
 
             String username = jwtUtils.getUserNameFromJwtToken(token);
-            List<String> roles = jwtUtils.getRolesFromJwtToken(token); // you need this method
+            Set<ERole> roles = jwtUtils.getRolesFromJwtToken(token); // you need this method
             List<SimpleGrantedAuthority> authorities = roles.stream()
-                    .map(SimpleGrantedAuthority::new)
+                    .map(role -> new SimpleGrantedAuthority(role.name())) // convert enum to String
                     .toList();
 
             UserDetailsImpl userDetails = new UserDetailsImpl(
