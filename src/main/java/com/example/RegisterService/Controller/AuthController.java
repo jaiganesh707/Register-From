@@ -3,7 +3,6 @@ package com.example.RegisterService.Controller;
 
 import com.example.RegisterService.Entity.RefreshToken;
 import com.example.RegisterService.Entity.User;
-import com.example.RegisterService.GlobalExceptionHandling.CustomException;
 import com.example.RegisterService.Jwt.JwtUtils;
 import com.example.RegisterService.Model.Enum.ERole;
 import com.example.RegisterService.Model.Request.LoginRequest;
@@ -11,7 +10,6 @@ import com.example.RegisterService.Model.Request.TokenRefreshRequest;
 import com.example.RegisterService.Model.Response.JwtResponse;
 import com.example.RegisterService.Model.Response.RegisterResponse;
 import com.example.RegisterService.Model.Response.TokenRefreshResponse;
-import com.example.RegisterService.Model.Response.UserResponse;
 import com.example.RegisterService.Repository.UserDao;
 
 import com.example.RegisterService.Service.RefreshTokenService;
@@ -76,12 +74,12 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerUser(@Valid @RequestBody User signUpRequest)throws Exception {
-        Object user=userService.registerUser(signUpRequest);
+        Object userData=userService.registerUser(signUpRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse<>(
                 LocalDateTime.now(),
                 HttpStatus.CREATED.value(),
                 "User registered successfully",
-                user
+                userData
         ));
     }
 

@@ -3,19 +3,17 @@ package com.example.RegisterService.Service;
 import com.example.RegisterService.Entity.User;
 import com.example.RegisterService.GlobalExceptionHandling.CustomException;
 import com.example.RegisterService.Model.Enum.ERole;
-import com.example.RegisterService.Model.Response.RegisterResponse;
+import com.example.RegisterService.Model.Response.UserResponse;
 import com.example.RegisterService.Repository.UserDao;
 import com.example.RegisterService.Security.UniqueIdGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl {
@@ -40,11 +38,28 @@ public class UserServiceImpl {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(request.getPassword()));
-        user.setRoles(new HashSet<>());
-        user.getRoles().add(ERole.ROLE_USER);
+        Set<ERole> roleEntities;
+        if (request.getRoles() == null || request.getRoles().isEmpty()) {
+            roleEntities = Set.of(ERole.ROLE_GUEST);
+        }else {
+            roleEntities = request.getRoles().stream()
+                    .map(roleStr -> {
+                        try {
+                            return ERole.valueOf(String.valueOf(roleStr));
+                        } catch (IllegalArgumentException e) {
+                            throw new CustomException("Error: Invalid role " + roleStr, 400);
+                        }
+                    })
+                    .collect(Collectors.toSet());
+        }
+        user.setRoles(roleEntities);
+
         user.setUserCode(UniqueIdGenerator.generateUserCode(8));
-        User savedUser = userDao.save(user);
-        return savedUser;
+        User userData=userDao.save(user);
+        Set<String> roleNames = userData.getRoles().stream()
+                .map(Enum::name)
+                .collect(Collectors.toSet());
+        return new UserResponse(userData.getUserCode(),userData.getUsername(),userData.getEmail(),roleNames);
     }
 
     public List<User> registerList()throws Exception{
