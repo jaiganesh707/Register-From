@@ -1,25 +1,19 @@
 package com.example.RegisterService.Model.Response;
 
-import com.example.RegisterService.Model.Enum.ERole;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.Set;
-
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
     private String userCode;
     private String username;
     private String email;
-    @Enumerated(EnumType.STRING)
-    private Set<ERole> roles = new HashSet<>();
+    private Set<String> roles;
 
-    public UserResponse(String userCode, String username, String email, Set<ERole> roles) {
-        this.userCode = userCode;
-        this.username = username;
-        this.email = email;
-        this.roles = roles;
+    public UserResponse(String userCode, String username, String email, Set<String> userRole) {
     }
 }

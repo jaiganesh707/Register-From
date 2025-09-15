@@ -1,15 +1,27 @@
 package com.example.RegisterService.Model.Response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
+
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class RegisterResponse<T> {
     private LocalDateTime timestamp;
     private int status;
     private String message;
     private T data;
 
+    public RegisterResponse(LocalDateTime timestamp, int status, String message, T data) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.message = message;
+        this.data = data;
+    }
 
     public LocalDateTime getTimestamp() {
         return timestamp;
@@ -37,13 +49,6 @@ public class RegisterResponse<T> {
 
     public T getData() {
         return data;
-    }
-
-    public RegisterResponse(LocalDateTime timestamp, int status, String message, T data) {
-        this.timestamp = timestamp;
-        this.status = status;
-        this.message = message;
-        this.data = data;
     }
 
     public void setData(T data) {

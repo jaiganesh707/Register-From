@@ -31,6 +31,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -43,9 +44,9 @@ public class AuthController {
     @Autowired AuthenticationManager authenticationManager;
     @Autowired private UserServiceImpl userService;
     @Autowired private UserDao userRepository;
-    @Autowired private PasswordEncoder encoder;
     @Autowired JwtUtils jwtUtils;
     @Autowired RefreshTokenService refreshTokenService;
+    @Autowired private PasswordEncoder encoder;
 
     public AuthController(PasswordEncoder encoder) {
         this.encoder = encoder;
@@ -71,17 +72,17 @@ public class AuthController {
                 roles));
     }
 
-    @PostMapping("/signup")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<RegisterResponse<UserResponse>> registerUser(@Valid @RequestBody User signUpRequest)throws Exception {
-        UserResponse savedUserResponse = userService.registerUser(signUpRequest);
-        RegisterResponse<UserResponse> response = new RegisterResponse<>(
+    @PostMapping(value = "/signup",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User signUpRequest)throws Exception {
+        Object user=userService.registerUser(signUpRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse<>(
                 LocalDateTime.now(),
                 HttpStatus.CREATED.value(),
                 "User registered successfully",
-                savedUserResponse
-        );
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+                user
+        ));
     }
 
 
