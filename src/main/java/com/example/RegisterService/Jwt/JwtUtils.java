@@ -13,9 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,12 +31,13 @@ public class JwtUtils {
 
     public String generateJwtToken(Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userPrincipal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(userPrincipal.getUsername())
-                .claim("roles", userPrincipal.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority) // ROLE_USER, ROLE_ADMIN etc.
-                        .toList())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)
@@ -61,7 +60,10 @@ public class JwtUtils {
      * Generate Refresh Token
      */
     public String generateRefreshToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh"); // mark this as refresh token
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + refreshTokenDurationMs))
