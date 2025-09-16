@@ -21,7 +21,8 @@ public class RegisterServiceApplication {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
-		config.addAllowedOriginPattern("*"); // allow all origins (for testing)
+		config.addAllowedOrigin("https://register-form-front-oqtf0rt1x-jais-projects-1743964d.vercel.app");
+		config.addAllowedOrigin("http://localhost:4200");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		source.registerCorsConfiguration("/**", config);
