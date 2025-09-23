@@ -98,16 +98,22 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         public UserDetailsImpl validateAndGetUser(String header) {
             if (header == null || !header.startsWith("Bearer ")) {
+                System.out.println("TOKEN-MISSING or INVALID FORMAT");
                 throw new CustomException("TOKEN-MISSING or INVALID FORMAT",HttpStatus.UNAUTHORIZED.value());
             }
 
             String token = header.substring(7);
 
             if (!jwtUtils.validateJwtToken(token)) {
+                System.out.println("TOKEN-INVALID or EXPIRED");
                 throw new CustomException("TOKEN-INVALID or EXPIRED",HttpStatus.UNAUTHORIZED.value());
             }
 
             String username = jwtUtils.getUserNameFromJwtToken(token);
+            if (username == null) {
+                System.out.println("USERNAME-NOT-FOUND-IN-TOKEN");
+                throw new CustomException("USERNAME-NOT-FOUND-IN-TOKEN", HttpStatus.UNAUTHORIZED.value());
+            }
             Set<ERole> roles = jwtUtils.getRolesFromJwtToken(token); // you need this method
             List<SimpleGrantedAuthority> authorities = roles.stream()
                     .map(role -> new SimpleGrantedAuthority(role.name())) // convert enum to String
@@ -120,15 +126,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     "",    // password not needed
                     authorities
             );
-
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            if (username == null) {
-                throw new CustomException("USERNAME-NOT-FOUND-IN-TOKEN",HttpStatus.UNAUTHORIZED.value());
-            }
-
-            return (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
+            return userDetails;
         }
     }

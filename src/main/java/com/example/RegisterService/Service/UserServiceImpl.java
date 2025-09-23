@@ -21,7 +21,6 @@ public class UserServiceImpl {
     private UserDao userDao;
     @Autowired private PasswordEncoder encoder;
 
-
     @Transactional
     public Object registerUser(User request){
         if (Boolean.TRUE.equals(userDao.existsByUsername(request.getUsername()))) {

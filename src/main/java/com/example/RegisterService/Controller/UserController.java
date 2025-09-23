@@ -51,7 +51,6 @@ public class UserController {
         }
     }
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<RegisterResponse<User>> getUser(@RequestHeader(value = "Authorization", required = false) String authHeader,@Valid @PathVariable Long id)throws Exception{
         try {
         authTokenFilter.validateAndGetUser(authHeader);
@@ -74,7 +73,6 @@ public class UserController {
         }
     }
     @PostMapping("/delete/{id}")
-    @PreAuthorize(("hasRole('ROLE_ADMIN')"))
     public ResponseEntity<RegisterResponse> deleteUser(@RequestHeader(value = "Authorization", required = false) String authHeader,@Valid @PathVariable Long id)throws Exception{
         authTokenFilter.validateAndGetUser(authHeader);
         String message= userService.deleteUser(id);
